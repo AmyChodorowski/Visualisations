@@ -31,22 +31,15 @@ class Bird():
         p3 = Point(x_c - Bird.width, y_c)
         p4 = Point(x_c, y_c + Bird.height)
 
-        self.body = Polygon([p1, p2, p3, p4])
-        Bird.rotate(self, self.heading)
+        self.body = Polygon(Bird.rotate_points(deg=self.heading,
+                                               points=[p1, p2, p3, p4]))
 
     def get_movement(self, flock):
 
         # Avoid the edge - change in heading
         s = Bird.avoid_edges(self)
         if s:
-            # Rotate
-            self.body.undraw()
-            Bird.rotate(self, s)
-            self.body.draw(self.win)
-
-            # Change heading
-            self.heading = (self.heading+s) % 360
-
+            Bird.rotate_bird(self, s)
 
         # Others birds - change in heading (steering)
         x0 = self.body.points[1].x
@@ -110,12 +103,21 @@ class Bird():
                 elif s[0] == 1:
                     return 900 - 2 * h
 
-    def rotate(self, deg):
+    def rotate_bird(self, deg):
         """ Rotate polygon clockwise about its center. """
+
+        # Rotate
+        self.body.undraw()
+        self.body.points = Bird.rotate_points(deg=deg, points=self.body.getPoints())
+        self.body.draw(self.win)
+
+        # Change heading
+        self.heading = (self.heading + deg) % 360
+
+    @staticmethod
+    def rotate_points(deg, points):
         theta = float(deg) * 0.0174533
         cosang, sinang = math.cos(theta), math.sin(theta)
-
-        points = self.body.getPoints()
         cx, cy = Bird.get_centre(points)
 
         new_points = []
@@ -126,8 +128,7 @@ class Bird():
             new_y = (-tx * sinang + ty * cosang) + cy
             new_points.append(Point(new_x, new_y))
 
-        self.body.points = new_points
-
+        return new_points
 
     @staticmethod
     def get_centre(points):
@@ -185,9 +186,7 @@ class Bird():
     def recalculate_heading():
         pass
 
-    @staticmethod
-    def calculate_rotate():
-        pass
+
 
 
 
