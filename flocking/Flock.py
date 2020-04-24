@@ -10,6 +10,7 @@ class Flock():
         self.y_limit = y
 
         self.s = speed
+
         self.vision = vision
         self.perception = perception * Bird.height
         self.perception_2 = (perception * Bird.height)**2
