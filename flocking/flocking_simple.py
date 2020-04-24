@@ -1,5 +1,5 @@
 from flocking.Flock import *
-
+from random import *
 
 def set_screen(x, y):
 
@@ -10,23 +10,24 @@ def set_screen(x, y):
 def main():
     x = 800
     y = 800
-    speed = 3
-    perception = 5
-    align = True
+    N = 50
+    speed = 5
+    perception = 10
+    alignment = False
     cohesion = False
     separation = False
 
     win = set_screen(x, y)
 
-    flock = Flock(win, x, y, N=50, speed=(speed-speed/10, speed+speed/10), perception=perception)
+    flock = Flock(win, x, y, N=N, speed=(speed-speed/10, speed+speed/10), perception=perception)
 
     while True:
 
         try:
             for bird in flock.flock:
                 bird.body.move(*bird.get_movement(flock.flock, flock.perception, flock.perception_2,
-                                                  align=align, cohesion=cohesion, separation=separation))
-                # time.sleep(0.0001)
+                                                  alignment=alignment, cohesion=cohesion, separation=separation))
+                #time.sleep(0.0001)
 
 
         except GraphicsError:

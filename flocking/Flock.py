@@ -4,7 +4,7 @@ from random import *
 
 class Flock():
 
-    def __init__(self, win, x, y, N, speed, perception, align=False, cohesion=False, separation=False):
+    def __init__(self, win, x, y, N, speed, perception, alignment=False, cohesion=False, separation=False):
         self.win = win
         self.x_limit = x
         self.y_limit = y
@@ -16,7 +16,7 @@ class Flock():
         self.flock = []
         Flock.create_flock(self, N)
 
-        self.align = align
+        self.alignment = alignment
         self.cohesion = cohesion
         self.separation = separation
 

@@ -34,24 +34,24 @@ class Bird():
         self.body = Polygon(Bird.rotate_points(deg=self.heading,
                                                points=[p1, p2, p3, p4]))
 
-    def get_movement(self, flock, perception, perception_2, align=False, cohesion=False, separation=False):
+    def get_movement(self, flock, perception, perception_2, alignment=False, cohesion=False, separation=False):
 
         # Avoid the edge - change in heading
-        if Bird.close_to_edge(self, perception):
+        if Bird.close_to_edge(self, perception/10):
             rotate = Bird.avoid_edges(self)
             if rotate:
                 Bird.rotate_bird(self, rotate)
 
         # Others birds - change in heading (steering)
         else:
-            if align or cohesion or separation:
+            if alignment or cohesion or separation:
                 x0 = self.body.points[1].x
                 y0 = self.body.points[1].y
-                a, c = Bird.apply_behaviour(self, x0, y0, flock, perception_2)
+                steering = Bird.apply_behaviour(self, x0, y0, flock, perception_2,
+                                                alignment, cohesion, separation)
 
-                 = a
                 if steering:
-                    rotate = (steering - self.heading) % 360
+                    rotate = 0.1*(steering - self.heading)
                     Bird.rotate_bird(self, rotate)
 
         angle = float(self.heading) * 0.0174533
@@ -178,9 +178,15 @@ class Bird():
 
         return cx, cy
 
-    def apply_behaviour(self, x0, y0, flock, perception_2):
-        for bird in flock:
+    def apply_behaviour(self, x0, y0, flock, perception_2, alignment, cohesion, separation):
+        affected = False
+        align_headings = []
+        cohesion_x = []
+        cohesion_y = []
+        seperation_x = []
+        seperation_y = []
 
+        for bird in flock:
             if bird.id != self.id:
 
                 x = bird.body.points[1].x
@@ -188,25 +194,36 @@ class Bird():
                 h = bird.heading
 
                 norm = (x - x0)**2 + (y - y0)**2
-                align_headings = []
-                cohesion_x = []
-                cohesion_y = []
-
                 if norm < perception_2:
+                    affected = True
                     align_headings.append(h)
                     cohesion_x.append(x)
                     cohesion_y.append(y)
-
-        # Alignment
-        a = Bird.average_heading(align_headings)
+                    seperation_x.append(x/norm)
+                    seperation_y.append(y/norm)
 
         # Cohesion
-        if len(cohesion_x) > 0:
-            c = Bird.calculate_heading([x0, y0], [cohesion_x, cohesion_y])
-        else:
-            c = None
+        if affected:
+            steering_headings = []
 
-        return a, c
+            if alignment:
+                steering_headings.append(Bird.average_heading(align_headings))
+
+            if cohesion:
+                cohesion_headings = [sum(cohesion_x)/len(cohesion_x), sum(cohesion_y)/len(cohesion_y)]
+                steering_headings.append(Bird.calculate_heading([x0, y0], cohesion_headings))
+
+            if separation:
+                separation_headings = [sum(seperation_x) / len(seperation_x), sum(seperation_y) / len(seperation_y)]
+                steering_headings.append(Bird.calculate_heading([x0, y0], separation_headings))
+
+            if len(steering_headings) == 0 :
+                return steering_headings[0]
+            else:
+                return Bird.average_heading(steering_headings)
+
+        else:
+            return False
 
     @staticmethod
     def average_heading(deg):
