@@ -34,20 +34,46 @@ class Bird():
         self.body = Polygon(Bird.rotate_points(deg=self.heading,
                                                points=[p1, p2, p3, p4]))
 
-    def get_movement(self, flock):
+    def get_movement(self, flock, perception, perception_2, align=False, cohesion=False, separation=False):
 
         # Avoid the edge - change in heading
-        s = Bird.avoid_edges(self)
-        if s:
-            Bird.rotate_bird(self, s)
+        if Bird.close_to_edge(self, perception):
+            rotate = Bird.avoid_edges(self)
+            if rotate:
+                Bird.rotate_bird(self, rotate)
 
         # Others birds - change in heading (steering)
-        x0 = self.body.points[1].x
-        y0 = self.body.points[1].y
-        #p = Bird.apply_behaviour(self, x0, y0, flock)
+        else:
+            if align or cohesion or separation:
+                x0 = self.body.points[1].x
+                y0 = self.body.points[1].y
+                a, c = Bird.apply_behaviour(self, x0, y0, flock, perception_2)
+
+                 = a
+                if steering:
+                    rotate = (steering - self.heading) % 360
+                    Bird.rotate_bird(self, rotate)
 
         angle = float(self.heading) * 0.0174533
         return self.speed*math.sin(angle), self.speed*math.cos(angle)
+
+    def close_to_edge(self, perception):
+
+        x = self.body.points[1].x
+        y = self.body.points[1].y
+
+        # Side closest to
+        if y > self.y_limit - perception:
+            return True
+        elif y < perception:
+            return True
+
+        if x > self.x_limit - perception:
+            return True
+        elif x < perception:
+            return True
+
+        return False
 
     def avoid_edges(self):
         h = self.heading
@@ -115,6 +141,19 @@ class Bird():
         self.heading = (self.heading + deg) % 360
 
     @staticmethod
+    def calculate_heading(base, tip):
+
+        # get x,y
+        x = tip[0] - base[0]
+        y = tip[1] - base[1]
+
+        # get deg
+        rad = math.atan2(x, y)
+        deg = Bird.map_atan2(rad)
+
+        return deg
+
+    @staticmethod
     def rotate_points(deg, points):
         theta = float(deg) * 0.0174533
         cosang, sinang = math.cos(theta), math.sin(theta)
@@ -139,40 +178,47 @@ class Bird():
 
         return cx, cy
 
-    def apply_behaviour(self, x0, y0, flock, perception):
-
+    def apply_behaviour(self, x0, y0, flock, perception_2):
         for bird in flock:
+
             if bird.id != self.id:
 
                 x = bird.body.points[1].x
                 y = bird.body.points[1].y
+                h = bird.heading
 
                 norm = (x - x0)**2 + (y - y0)**2
+                align_headings = []
+                cohesion_x = []
+                cohesion_y = []
 
-                if norm < (perception*Bird.height)**2:
+                if norm < perception_2:
+                    align_headings.append(h)
+                    cohesion_x.append(x)
+                    cohesion_y.append(y)
 
-                    # alginment
-                    pass
+        # Alignment
+        a = Bird.average_heading(align_headings)
+
+        # Cohesion
+        if len(cohesion_x) > 0:
+            c = Bird.calculate_heading([x0, y0], [cohesion_x, cohesion_y])
+        else:
+            c = None
+
+        return a, c
 
     @staticmethod
     def average_heading(deg):
-        t = 0
-        for d in deg:
-            d = math.radians(d)
-            s2 = complex(math.sin(d), math.cos(d))
-            t += s2
-        b = t / len(deg)
-        a = math.atan2(round(b.real, 15), round(b.imag, 15))
-        return Bird.map_atan2(a)
-
-    def align(self):
-        pass
-
-    def cohesion(self):
-        pass
-
-    def seperation(self):
-        pass
+        if len(deg) > 0:
+            t = 0
+            for d in deg:
+                d = math.radians(d)
+                t += complex(math.sin(d), math.cos(d))
+            a = math.atan2(round(t.real, 15), round(t.imag, 15))
+            return round(Bird.map_atan2(a), 12)
+        else:
+            return None
 
     @staticmethod
     def map_atan2(rad):
@@ -180,11 +226,9 @@ class Bird():
         if d < 0.0:
             return d + 360.0
         else:
-            return d
+            return abs(d)
 
-    @staticmethod
-    def recalculate_heading():
-        pass
+
 
 
 

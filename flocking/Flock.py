@@ -4,16 +4,21 @@ from random import *
 
 class Flock():
 
-    def __init__(self, win, x, y, N, speed, perception):
+    def __init__(self, win, x, y, N, speed, perception, align=False, cohesion=False, separation=False):
         self.win = win
         self.x_limit = x
         self.y_limit = y
 
         self.s = speed
-        self.perception = perception  # Distance in hieghts
+        self.perception = perception * Bird.height
+        self.perception_2 = (perception * Bird.height)**2
 
         self.flock = []
         Flock.create_flock(self, N)
+
+        self.align = align
+        self.cohesion = cohesion
+        self.separation = separation
 
     def create_flock(self, N):
         deg = (0, 360)

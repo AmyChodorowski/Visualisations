@@ -8,19 +8,26 @@ def set_screen(x, y):
 
 
 def main():
-    x = 500
-    y = 500
+    x = 800
+    y = 800
+    speed = 3
+    perception = 5
+    align = True
+    cohesion = False
+    separation = False
 
     win = set_screen(x, y)
 
-
-    flock = Flock(win, x, y, N=10, speed=(2/20, 5/20), perception=5)
+    flock = Flock(win, x, y, N=50, speed=(speed-speed/10, speed+speed/10), perception=perception)
 
     while True:
 
         try:
-            for index, bird in enumerate(flock.flock):
-                bird.body.move(*bird.get_movement(flock.flock))
+            for bird in flock.flock:
+                bird.body.move(*bird.get_movement(flock.flock, flock.perception, flock.perception_2,
+                                                  align=align, cohesion=cohesion, separation=separation))
+                # time.sleep(0.0001)
+
 
         except GraphicsError:
             break
