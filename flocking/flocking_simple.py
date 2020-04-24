@@ -13,6 +13,7 @@ def main():
     N = 50
     speed = 5
     perception = 10
+    vision = 70
     alignment = True
     cohesion = False
     separation = False

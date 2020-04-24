@@ -4,12 +4,13 @@ from random import *
 
 class Flock():
 
-    def __init__(self, win, x, y, N, speed, perception, alignment=False, cohesion=False, separation=False):
+    def __init__(self, win, x, y, N, speed, perception, vision, alignment=False, cohesion=False, separation=False):
         self.win = win
         self.x_limit = x
         self.y_limit = y
 
         self.s = speed
+        self.vision = vision
         self.perception = perception * Bird.height
         self.perception_2 = (perception * Bird.height)**2
 
