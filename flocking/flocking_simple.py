@@ -14,7 +14,7 @@ def main():
     speed = 5
     perception = 10
     alignment = True
-    cohesion = True
+    cohesion = False
     separation = False
 
     win = set_screen(x, y)

@@ -38,7 +38,7 @@ class Bird():
     def get_movement(self, flock, perception, perception_2, alignment=False, cohesion=False, separation=False):
 
         # Avoid the edge - change in heading
-        Bird.close_to_edge(self, perception/2)
+        Bird.close_to_edge(self, perception)
         if self.near_edge:
             rotate = Bird.avoid_edges(self)
             if rotate:
@@ -200,8 +200,8 @@ class Bird():
                     align_headings.append(h)
                     cohesion_x.append(x)
                     cohesion_y.append(y)
-                    seperation_x.append(x/norm)
-                    seperation_y.append(y/norm)
+                    seperation_x.append((x - x0)/norm)
+                    seperation_y.append((y - y0)/norm)
 
         # Cohesion
         if affected:
@@ -215,8 +215,12 @@ class Bird():
                 steering_headings.append(Bird.calculate_heading([x0, y0], cohesion_point))
 
             if separation:
-                separation_headings = [sum(seperation_x) / len(seperation_x), sum(seperation_y) / len(seperation_y)]
-                steering_headings.append(Bird.calculate_heading([x0, y0], separation_headings))
+                seperation_x = sum(seperation_x) / len(seperation_x)
+                seperation_y = sum(seperation_y) / len(seperation_y)
+                rad = math.atan2(seperation_x, seperation_y)
+                deg = Bird.map_atan2(rad)
+                deg = (deg + 180) % 360
+                steering_headings.append(deg)
 
             if len(steering_headings) == 0 :
                 return steering_headings[0]
@@ -245,6 +249,10 @@ class Bird():
             return d + 360.0
         else:
             return abs(d)
+
+    @staticmethod
+    def in_area_sector():
+        pass
 
 
 
