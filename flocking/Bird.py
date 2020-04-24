@@ -38,7 +38,7 @@ class Bird():
     def get_movement(self, flock, perception, perception_2, alignment=False, cohesion=False, separation=False):
 
         # Avoid the edge - change in heading
-        Bird.close_to_edge(self, perception)
+        Bird.close_to_edge(self, perception/2)
         if self.near_edge:
             rotate = Bird.avoid_edges(self)
             if rotate:
@@ -53,7 +53,7 @@ class Bird():
                                                 alignment, cohesion, separation)
 
                 if steering:
-                    rotate = 0.1*(steering - self.heading)
+                    rotate = (steering - self.heading)
                     Bird.rotate_bird(self, rotate)
 
         angle = float(self.heading) * 0.0174533
@@ -198,8 +198,8 @@ class Bird():
                 if norm < perception_2:
                     affected = True
                     align_headings.append(h)
-                    cohesion_x.append((x - x0))
-                    cohesion_y.append((y - y0))
+                    cohesion_x.append(x)
+                    cohesion_y.append(y)
                     seperation_x.append(x/norm)
                     seperation_y.append(y/norm)
 
@@ -211,8 +211,8 @@ class Bird():
                 steering_headings.append(Bird.average_heading(align_headings))
 
             if cohesion:
-                cohesion_headings = [sum(cohesion_x)/len(cohesion_x), sum(cohesion_y)/len(cohesion_y)]
-                steering_headings.append(Bird.calculate_heading([x0, y0], cohesion_headings))
+                cohesion_point = [sum(cohesion_x)/len(cohesion_x), sum(cohesion_y)/len(cohesion_y)]
+                steering_headings.append(Bird.calculate_heading([x0, y0], cohesion_point))
 
             if separation:
                 separation_headings = [sum(seperation_x) / len(seperation_x), sum(seperation_y) / len(seperation_y)]
