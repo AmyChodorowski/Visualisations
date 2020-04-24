@@ -11,9 +11,9 @@ def main():
     x = 800
     y = 800
     N = 50
-    speed = 5
+    speed = 3
     perception = 10
-    alignment = False
+    alignment = True
     cohesion = False
     separation = False
 

@@ -14,6 +14,7 @@ class Bird():
         self.win = win
         self.x_limit = x
         self.y_limit = y
+        self.near_edge = False
 
         self.id = id
 
@@ -37,7 +38,8 @@ class Bird():
     def get_movement(self, flock, perception, perception_2, alignment=False, cohesion=False, separation=False):
 
         # Avoid the edge - change in heading
-        if Bird.close_to_edge(self, perception/10):
+        Bird.close_to_edge(self, perception)
+        if self.near_edge:
             rotate = Bird.avoid_edges(self)
             if rotate:
                 Bird.rotate_bird(self, rotate)
@@ -57,23 +59,22 @@ class Bird():
         angle = float(self.heading) * 0.0174533
         return self.speed*math.sin(angle), self.speed*math.cos(angle)
 
-    def close_to_edge(self, perception):
+    def close_to_edge(self, distance):
 
         x = self.body.points[1].x
         y = self.body.points[1].y
 
         # Side closest to
-        if y > self.y_limit - perception:
-            return True
-        elif y < perception:
-            return True
-
-        if x > self.x_limit - perception:
-            return True
-        elif x < perception:
-            return True
-
-        return False
+        if y > self.y_limit - distance:
+            self.near_edge = True
+        elif y < distance:
+            self.near_edge = True
+        elif x > self.x_limit - distance:
+            self.near_edge = True
+        elif x < distance:
+            self.near_edge = True
+        else:
+            self.near_edge = False
 
     def avoid_edges(self):
         h = self.heading
@@ -187,7 +188,7 @@ class Bird():
         seperation_y = []
 
         for bird in flock:
-            if bird.id != self.id:
+            if bird.id != self.id and not bird.near_edge:
 
                 x = bird.body.points[1].x
                 y = bird.body.points[1].y
@@ -197,8 +198,8 @@ class Bird():
                 if norm < perception_2:
                     affected = True
                     align_headings.append(h)
-                    cohesion_x.append(x)
-                    cohesion_y.append(y)
+                    cohesion_x.append((x - x0))
+                    cohesion_y.append((y - y0))
                     seperation_x.append(x/norm)
                     seperation_y.append(y/norm)
 
