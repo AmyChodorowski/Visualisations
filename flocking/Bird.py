@@ -39,7 +39,7 @@ class Bird():
                      alignment=False, cohesion=False, separation=False):
 
         # Avoid the edge - change in heading
-        Bird.close_to_edge(self, perception/2)
+        Bird.close_to_edge(self, perception)
         if self.near_edge:
             rotate = Bird.avoid_edges(self)
             if rotate:
@@ -223,6 +223,7 @@ class Bird():
                 deg = Bird.map_atan2(rad)
                 deg = (deg + 180) % 360
                 steering_headings.append(deg)
+                print(deg, self.heading)
 
             if len(steering_headings) == 0:
                 return steering_headings[0]

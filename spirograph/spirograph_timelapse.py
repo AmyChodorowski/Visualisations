@@ -32,12 +32,14 @@ def set_screen(win, X, Y, main_r):
     Text(Point(X+20, 50), 'K:').draw(win)
     entry_k = Entry(Point(X+80, 50), 10)
     entry_k.setText(float(90/main_r))
+    entry_k.setTextColor('white')
     entry_k.draw(win)
 
     # L
     Text(Point(X+20, 100), 'L:').draw(win)
     entry_l = Entry(Point(X+80, 100), 10)
     entry_l.setText(0.9)
+    entry_l.setTextColor('white')
     entry_l.draw(win)
 
     return entry_k, entry_l

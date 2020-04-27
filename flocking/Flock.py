@@ -30,10 +30,11 @@ class Flock():
         w = self.win
 
         for i in range(N):
-            c = (randint(0+height, x-height), randint(0+height, y-height))
+            c = (randint(0+height, x-height), randint(0+20*height, y-height))
             h = randint(*deg)
             s = uniform(*self.s)
             b = Bird(w, x, y, i, c, h, s)
+            b.body.setFill('gray')
             b.body.draw(w)
             self.flock.append(b)
 

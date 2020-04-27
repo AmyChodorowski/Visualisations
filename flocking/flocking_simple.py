@@ -9,13 +9,13 @@ def set_screen(x, y):
 
 def main():
     x = 600
-    y = 400
-    N = 50
-    speed = 3
-    perception = 10
-    vision = 70
-    alignment = True
-    cohesion = True
+    y = 700
+    N = 5
+    speed = 0.1
+    perception = 5
+    vision = 85
+    alignment = False
+    cohesion = False
     separation = True
 
     win = set_screen(x, y)
