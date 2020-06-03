@@ -12,6 +12,7 @@ class Sudoku:
         self.status = 'Initialised'
         self.unsolved = []
         self.find_unsolved()
+        self.solution = 0
 
     def print_grid(self):
         print(self.grid)
@@ -126,18 +127,41 @@ class Sudoku:
                         if self.possible(y, x, n):
                             # Fill in
                             self.grid[y, x] = n
-                            self.print_grid_pretty()
+                            self.print_grid_pretty(sleeping=0.01)
 
                             # Start again
                             self.solve_with_print()
 
                             # Back track
                             self.grid[y, x] = 0
-                            self.print_grid_pretty()
+                            self.print_grid_pretty(sleeping=0.01)
                     return
 
         self.print_grid_pretty()
         input("Done! Anymore solutions?")
+
+    def solve_count(self):
+        for y in range(9):
+            for x in range(9):
+                if self.grid[y, x] == 0:
+                    for n in range(1, 10):
+                        if self.possible(y, x, n):
+                            # Fill in
+                            self.grid[y, x] = n
+
+                            # Start again
+                            self.solve_count()
+
+                            # Back track
+                            self.grid[y, x] = 0
+                    return
+
+        self.find_unsolved()
+        if len(self.unsolved) == 0:
+            print('Found a good solution')
+            self.solution += 1
+        else:
+            print('Found a false solution')
 
     def find_unsolved(self):
         """
