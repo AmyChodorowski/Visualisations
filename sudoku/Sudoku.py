@@ -30,7 +30,7 @@ class Sudoku:
 
         clear_output(wait=True)
         print(graph)
-        t.sleep(0.001)
+        t.sleep(2)
 
     @staticmethod
     def print_ready():
@@ -68,7 +68,7 @@ class Sudoku:
 
         # Box
         else:
-            y0 = (y // 3) * 3
+            y0 = (y//3) * 3
             x0 = (x//3) * 3
             for i in range(3):
                 for j in range(3):
