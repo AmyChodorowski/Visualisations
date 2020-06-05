@@ -12,7 +12,7 @@ class Sudoku:
         self.status = 'Initialised'
         self.unsolved = []
         self.find_unsolved()
-        self.solution = 0
+        self.solutions = 0
 
     def print_grid(self):
         print(self.grid)
@@ -222,7 +222,7 @@ class Sudoku:
 
             # Solution found
             if len(values) == 1:
-                # print("Grid [{y}, {x}] is {v}".format(y=coor[0], x=coor[1], v=values[0]))
+                print("Grid [{y}, {x}] is {v}".format(y=coor[0], x=coor[1], v=values[0]))
                 self.grid[coor[0], coor[1]] = values[0]  # Update grid
                 remove_index.append(index)  # Remove from unsolved
 
